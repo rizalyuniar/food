@@ -49,4 +49,4 @@ export class AuthGuard implements CanActivate {
   }
 }
 
-export const Roles = (...roles: string[]) => SetMetadata('roles', roles);
+export const Role = (...role: string[]) => SetMetadata('roles', role);
