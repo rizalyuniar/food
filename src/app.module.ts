@@ -10,17 +10,25 @@ import { User } from './users/entities/user.entity';
 import { DatabaseConnectionService } from './services/database-connection.service';
 import { AuthModule } from './auth/auth.module';
 import { TenantModule } from './tenant/tenant.module';
+import { MulterModule } from '@nestjs/platform-express';
+import { TFileModule } from './t_file/t_file.module';
+import { FilesModule } from './files/files.module';
+import { FilesService } from './files/files.service';
+import { UploadModule } from './upload/upload.module';
 
 @Module({
   imports: [
-
     TypeOrmModule.forRootAsync({
       useClass: DatabaseConnectionService
     }),
+    // MulterModule.register({ dest: './uploads' }),
     AdminModule,
     UsersModule,
     AuthModule,
     TenantModule,
+    TFileModule,
+    FilesModule,
+    UploadModule,
   ],
   controllers: [AppController],
   providers: [AppService],

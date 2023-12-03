@@ -22,6 +22,8 @@ export class AuthGuard implements CanActivate {
         { secret: jwtConstants.secret }
       );
       request['admin'] = payload;
+      console.log(payload);
+      
 
       const allowedRole = this.getAllowedRoles(context);
 

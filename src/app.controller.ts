@@ -1,7 +1,7 @@
-import { Controller, Get, HttpCode, Post, Req, Res } from '@nestjs/common';
+import { Controller, Get, HttpCode, Post, Req, Res, Patch, UseInterceptors, UploadedFile } from '@nestjs/common';
 import { AppService } from './app.service';
 import { response } from 'express';
-
+import { FileInterceptor } from '@nestjs/platform-express';
 
 let heroes = [
   {
@@ -18,7 +18,7 @@ let heroes = [
 
 @Controller()
 export class AppController {
-  constructor(private readonly appService: AppService) {}
+  constructor(private readonly appService: AppService) { }
 
   @Get('/')
   getHello(): string {
@@ -32,22 +32,29 @@ export class AppController {
 
   @Post('store')
   // @HttpCode(200)
-  store(@Req() request, @Res({ passthrough: true}) response){
+  store(@Req() request, @Res({ passthrough: true }) response) {
     try {
-      const {id, nama, type, gambar} = request.body;
-    let datas = [];
+      const { id, nama, type, gambar } = request.body;
+      let datas = [];
 
-    datas.push({
-      id, nama, type, gambar
-    })
-    
-    response.status(200).send({
-      data: datas
-    })
-  
-    return datas
-    } catch (error) { 
-      
+      datas.push({
+        id, nama, type, gambar
+      })
+
+      response.status(200).send({
+        data: datas
+      })
+
+      return datas
+    } catch (error) {
+      console.log(error);
+
     }
   }
+
+  // @Patch('upload')
+  // @UseInterceptors(FileInterceptor('file'))
+  // async uploadFile(@UploadedFile() file: Express.Multer.File) {
+  //   return this.appService.uploadFile(file);
+  // }
 }
