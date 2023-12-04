@@ -5,6 +5,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { File } from './entities/file.entity';
 import { v4 as uuidv4 } from 'uuid';
+import { appConfig } from 'src/config/app';
 
 @Injectable()
 export class FilesService {
@@ -12,12 +13,19 @@ export class FilesService {
     @InjectRepository(File) private readonly filesRepository: Repository<File>,
   ) {}
 
-  async saveFile(filename: string): Promise<File> {
+  async saveFile(filename: string, mimetype: string, created_by: string): Promise<File> {
     const file = this.filesRepository.create({
       id: uuidv4(),
       filename,
+      basepath: appConfig.base_path_storage,
+      mimetype,
+      created_by,
     });
     return await this.filesRepository.save(file);
+  }
+
+  async getFileById(id: string): Promise<File> {
+    return await this.filesRepository.findOne({where: {id} });
   }
  
 

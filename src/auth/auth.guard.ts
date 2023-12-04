@@ -22,17 +22,16 @@ export class AuthGuard implements CanActivate {
         { secret: jwtConstants.secret }
       );
       request['admin'] = payload;
-      console.log(payload);
-      
+      // console.log(payload);
 
       const allowedRole = this.getAllowedRoles(context);
-
       if (!allowedRole.includes(payload.role)) {
-        throw new UnauthorizedException('Akses tidak diizinkan. Kamu bukan admin.');
+        throw new UnauthorizedException(`Akses tidak diizinkan. Kamu bukan ${allowedRole.join(' atau ')}.`);
       }
     } catch (error) {
       console.error(error);
-      if (error instanceof UnauthorizedException && error.message === 'Akses tidak diizinkan. Kamu bukan admin.') {
+      const allowedRole = this.getAllowedRoles(context);
+      if (error instanceof UnauthorizedException && error.message === `Akses tidak diizinkan. Kamu bukan ${allowedRole.join(' atau ')}.`) {
         throw error;
       }
       throw new UnauthorizedException('Token tidak valid.');
