@@ -15,6 +15,7 @@ import { TFileModule } from './t_file/t_file.module';
 import { FilesModule } from './files/files.module';
 import { FilesService } from './files/files.service';
 import { UploadModule } from './upload/upload.module';
+import { BannerModule } from './banner/banner.module';
 
 @Module({
   imports: [
@@ -29,6 +30,7 @@ import { UploadModule } from './upload/upload.module';
     TFileModule,
     FilesModule,
     UploadModule,
+    BannerModule,
   ],
   controllers: [AppController],
   providers: [AppService],

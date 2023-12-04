@@ -6,6 +6,7 @@ import { Repository } from 'typeorm';
 import { File } from './entities/file.entity';
 import { v4 as uuidv4 } from 'uuid';
 import { appConfig } from 'src/config/app';
+import { AdminPayload } from 'src/admin/admin.interface';
 
 @Injectable()
 export class FilesService {
@@ -13,15 +14,22 @@ export class FilesService {
     @InjectRepository(File) private readonly filesRepository: Repository<File>,
   ) {}
 
-  async saveFile(filename: string, mimetype: string, created_by: string): Promise<File> {
-    const file = this.filesRepository.create({
+  async saveUploadedFile(file: Express.Multer.File, payload: AdminPayload): Promise<File> {
+    const { filename, mimetype } = file;
+    const basepath = appConfig.base_path_storage;
+    const type = 'foto_makanan';
+    const created_by = payload.email;
+  
+    const fileData = this.filesRepository.create({
       id: uuidv4(),
       filename,
-      basepath: appConfig.base_path_storage,
+      basepath,
       mimetype,
+      type,
       created_by,
     });
-    return await this.filesRepository.save(file);
+  
+    return await this.filesRepository.save(fileData);
   }
 
   async getFileById(id: string): Promise<File> {

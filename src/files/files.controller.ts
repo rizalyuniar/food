@@ -15,15 +15,10 @@ export class FilesController {
   @Roles('admin')
   @UseInterceptors(FileInterceptor('file'))
   async uploadFile(@UploadedFile() file: Express.Multer.File, @Request() request) {
-    console.log('file', file);
-
     const payload = request['admin'];
-    const { filename } = file;
-    const { mimetype } = file;
-    const created_by = payload.email;
-    const savedFile = await this.filesService.saveFile(filename,mimetype,created_by);
+    const savedFile = await this.filesService.saveUploadedFile(file, payload);
+    // console.log('file', file);
     // console.log('File saved:', savedFile);
-    
     return { message: 'File uploaded successfully', file: savedFile };
   }
   
@@ -57,7 +52,7 @@ export class FilesController {
       
 
       if (fileData) {
-        console.log("fetch document : " + fileData.mimetype);
+        // console.log("fetch document : " + fileData.mimetype);
         res.setHeader('Content-Type', fileData.mimetype);
 
         const fileStream = fs.createReadStream(`${fileData.basepath}/${fileData.filename}`);
