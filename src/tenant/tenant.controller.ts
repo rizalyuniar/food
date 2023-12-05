@@ -1,21 +1,22 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Req } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Req, Request } from '@nestjs/common';
 import { TenantService } from './tenant.service';
 import { CreateTenantDto } from './dto/create-tenant.dto';
 import { UpdateTenantDto } from './dto/update-tenant.dto';
 import { InternalServerErrorException } from '@nestjs/common';
 import { Roles } from 'src/auth/role.decorator';
+import { request } from 'http';
 
 @Controller('tenant')
 export class TenantController {
   constructor(private readonly tenantService: TenantService) {}
   
   @Post()
-  @Roles('admin')
-  async create(@Body() createTenantDto: CreateTenantDto) {
+  @Roles('admin','kasir')
+  async create(@Body() createTenantDto: CreateTenantDto, @Request() request) {
+    const payload = request['admin'];
     try {
-      return await this.tenantService.create(createTenantDto);
+      return await this.tenantService.create(createTenantDto, payload);
     } catch (error) {
-      console.error(error);
       throw new InternalServerErrorException('Terjadi kesalahan saat membuat tenant');
     }
   }
@@ -24,14 +25,19 @@ export class TenantController {
   findAll() {
     return this.tenantService.findAll();
   }
+
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.tenantService.findOne(id);
   }
-  // @Patch(':id')
-  // update(@Param('id') id: string, @Body() updateTenantDto: UpdateTenantDto) {
-  //   return this.tenantService.update(+id, updateTenantDto);
-  // }
+
+  @Patch(':id')
+  @Roles('admin','kasir')
+  update(@Param('id') id: string, @Body() updateTenantDto: UpdateTenantDto, @Request() request) {
+    const payload = request['admin'];
+    return this.tenantService.update(id, updateTenantDto, payload);
+  }
+  
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.tenantService.remove(id);

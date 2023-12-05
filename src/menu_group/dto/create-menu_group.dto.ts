@@ -1,11 +1,11 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { IsEmail, IsNotEmpty, IsString, Matches, MinLength } from "class-validator";
 
-export class CreateBannerDto {
+export class CreateMenuGroupDto {
     @ApiProperty()
     @IsNotEmpty()
-    picture_file_id: string;
-    
+    name: string;
+
     @ApiProperty()
     @IsNotEmpty()
     description: string;
@@ -17,7 +17,7 @@ export class CreateBannerDto {
     @ApiProperty()
     @IsNotEmpty()
     status: number;
-
+    
     created_by: string;
     updated_by: string;
     deleted_by: string;

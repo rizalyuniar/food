@@ -4,11 +4,29 @@ import { IsEmail, IsNotEmpty, IsString, Matches, MinLength } from "class-validat
 export class CreateTenantDto {
     @ApiProperty()
     @IsNotEmpty()
-    @MinLength(3)
-    name_store: string;
+    name: string;
 
     @ApiProperty()
     @IsNotEmpty()
-    @MinLength(3)
-    status: string;
+    initial: string;
+
+    @ApiProperty()
+    @IsNotEmpty()
+    description: string;
+
+    @ApiProperty()
+    @IsNotEmpty()
+    profile_pict_file_id: string;
+
+    @ApiProperty()
+    @IsNotEmpty()
+    type: string;
+
+    @ApiProperty()
+    @IsNotEmpty()
+    status: number;
+
+    created_by: string;
+    updated_by: string;
+    deleted_by: string;
 }

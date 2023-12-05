@@ -16,6 +16,7 @@ import { FilesModule } from './files/files.module';
 import { FilesService } from './files/files.service';
 import { UploadModule } from './upload/upload.module';
 import { BannerModule } from './banner/banner.module';
+import { MenuGroupModule } from './menu_group/menu_group.module';
 
 @Module({
   imports: [
@@ -31,6 +32,7 @@ import { BannerModule } from './banner/banner.module';
     FilesModule,
     UploadModule,
     BannerModule,
+    MenuGroupModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -5,6 +5,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Tenant } from './entities/tenant.entity';
 import { Repository } from 'typeorm';
 import { v4 as uuidv4 } from 'uuid';
+import { AdminPayload } from 'src/admin/admin.interface';
 
 @Injectable()
 export class TenantService {
@@ -12,11 +13,16 @@ export class TenantService {
     @InjectRepository(Tenant) private readonly tenantRepository: Repository<Tenant>
   ) {}
 
-  async create(createTenantDto: CreateTenantDto): Promise<Tenant> {
+  async create(createTenantDto: CreateTenantDto, payload: AdminPayload): Promise<Tenant> {
     const tenant: Tenant = new Tenant();
     tenant.id = uuidv4();
-    tenant.name_store = createTenantDto.name_store;
+    tenant.name = createTenantDto.name;
+    tenant.initial = createTenantDto.initial;
+    tenant.description = createTenantDto.description;
+    tenant.profile_pict_file_id = createTenantDto.profile_pict_file_id;
+    tenant.type = createTenantDto.type;
     tenant.status = createTenantDto.status;
+    tenant.created_by = payload.username;
   
     return await this.tenantRepository.save(tenant);
   }
@@ -26,13 +32,24 @@ export class TenantService {
   }
 
   async findOne(id: string): Promise<Tenant> {
-    const admin = await this.tenantRepository.findOne({ where: { id } });
-
-    if (!admin) {
-      throw new NotFoundException(`Admin with id ${id} not found`);
+    const tenant = await this.tenantRepository.findOne({ where: { id } });
+    if (!tenant) {
+      throw new NotFoundException(`Tenant with id ${id} not found`);
     }
+    return tenant;
+  }
 
-    return admin;
+  async update(id: string, updateTenantDto: UpdateTenantDto, payload: AdminPayload) {
+    const tenant = await this.tenantRepository.findOne({ where: {id} })
+    tenant.name = updateTenantDto.name;
+    tenant.initial = updateTenantDto.initial;
+    tenant.description = updateTenantDto.description;
+    tenant.profile_pict_file_id = updateTenantDto.profile_pict_file_id;
+    tenant.type = updateTenantDto.type;
+    tenant.status = updateTenantDto.status;
+    tenant.updated_by = payload.username;
+
+    return this.tenantRepository.save(tenant)
   }
 
   async remove(id: string): Promise<{ affected?: number }> {
