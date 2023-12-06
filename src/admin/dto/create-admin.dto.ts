@@ -6,32 +6,37 @@ import { IsEmail, IsNotEmpty, IsString, Matches, MinLength } from "class-validat
 
 export class CreateAdminDto {
     @ApiProperty()
+    @IsEmail()
+    @IsNotEmpty()
+    email: string;
+
+    @ApiProperty()
     @IsNotEmpty()
     @MinLength(3)
     username: string;
 
     @ApiProperty()
     @IsNotEmpty()
-    // @Matches(passwordRegEx , {
-    //     message: `Password must contain Minimum 8 and maximum 20 characters, at least one uppercase letter, one lowercase letter, one number and one special character`,
-    //   })
     password: string;
 
     @ApiProperty()
-    @IsString()
+    @IsNotEmpty()
+    full_name: string;
+
+    @ApiProperty()
     @IsNotEmpty()
     role: string;
 
     @ApiProperty()
-    @IsEmail()
     @IsNotEmpty()
-    email: string;
-
-    @ApiProperty()
-    created_at: Date;
+    profile_pict_file_id: string;
 
     @ApiProperty()
     @IsNotEmpty()
-    @IsString()
+    status: number;
+
+    tenant_id: string;
     created_by: string;
+    updated_by: string;
+    deleted_by: string;
 }

@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
+import { ConflictException, HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateAdminDto } from './dto/create-admin.dto';
 import { UpdateAdminDto } from './dto/update-admin.dto';
 import { Admin } from './entities/admin.entity';
@@ -13,19 +13,28 @@ export class AdminService {
     @InjectRepository(Admin) private readonly adminRepository: Repository<Admin>
   ) {}
 
-  //  create new
   async createAdmin(createAdminDto: CreateAdminDto): Promise<Admin> {
     const saltOrRounds = 10;
     const password = createAdminDto.password;
     const hash = await bcrypt.hash(password, saltOrRounds);
+    const idTenant =uuidv4();
+
+    const existingAdmin = await this.adminRepository.findOne({ where: [{ email: createAdminDto.email }, { username: createAdminDto.username }] });
+    if (existingAdmin) {
+      throw new ConflictException('Email atau username sudah digunakan.');
+    }
 
     const admin: Admin = new Admin();
     admin.id = uuidv4();
-    admin.username = createAdminDto.username;
-    admin.role = createAdminDto.role;
     admin.email = createAdminDto.email;
+    admin.username = createAdminDto.username;
     admin.password = hash;
-    admin.created_by = createAdminDto.created_by;
+    admin.full_name = createAdminDto.full_name;
+    admin.role = createAdminDto.role;
+    admin.profile_pict_file_id = createAdminDto.profile_pict_file_id;
+    admin.tenant_id = admin.role === 'tenant' ? idTenant : null;
+    admin.status = createAdminDto.status;
+    // admin.created_by = createAdminDto.created_by;
 
     return this.adminRepository.save(admin);
   }
@@ -45,6 +54,10 @@ export class AdminService {
     if (!admin) {
       throw new NotFoundException(`Admin with email ${email} not found`);
     }
+
+    if (admin.status === -1) {
+      throw new NotFoundException('Account is non-active');
+  }
 
     const isMatch = await bcrypt.compare(password, admin.password);
     if (!isMatch) {
