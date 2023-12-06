@@ -34,7 +34,9 @@ export class BannerController {
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.bannerService.remove(+id);
+  @Roles('admin','kasir')
+  remove(@Param('id') id: string, @Request() request) {
+    const payload = request['admin'];
+    return this.bannerService.remove(id, payload);
   }
 }

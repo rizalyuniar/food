@@ -52,13 +52,16 @@ export class TenantService {
     return this.tenantRepository.save(tenant)
   }
 
-  async remove(id: string): Promise<{ affected?: number }> {
-    const result = await this.tenantRepository.delete(id);
+  async remove(id: string, payload: AdminPayload) {
+    // const result = await this.tenantRepository.delete(id);
+    const tenant = await this.tenantRepository.findOne({ where: {id} });
 
-    if (result.affected === 0) {
-      throw new NotFoundException(`Admin with ID ${id} not found`);
+    if (!tenant) {
+      throw new NotFoundException(`Tenant with ID ${id} not found`);
     }
-
-    return result;
+    tenant.status = -1;
+    tenant.deleted_at = new Date();
+    tenant.deleted_by = payload.username;
+    return this.tenantRepository.save(tenant);
   }
 }

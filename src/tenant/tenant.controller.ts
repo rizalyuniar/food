@@ -37,9 +37,11 @@ export class TenantController {
     const payload = request['admin'];
     return this.tenantService.update(id, updateTenantDto, payload);
   }
-  
+
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.tenantService.remove(id);
+  @Roles('admin','kasir')
+  remove(@Param('id') id: string, @Request() request) {
+    const payload = request['admin'];
+    return this.tenantService.remove(id, payload);
   }
 }

@@ -48,7 +48,15 @@ export class MenuGroupService {
     return this.menugroupRepository.save(menuGroup)
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} menuGroup`;
+  async remove(id: string, payload: AdminPayload) {
+    const menuGroup = await this.menugroupRepository.findOne({ where: {id} });
+     
+    if (!menuGroup) {
+      throw new Error(`Menu group with ID ${id} not found`);    
+    }
+    menuGroup.status = -1;
+    menuGroup.deleted_at = new Date();
+    menuGroup.deleted_by = payload.username;
+    return this.menugroupRepository.save(menuGroup);
   }
 }

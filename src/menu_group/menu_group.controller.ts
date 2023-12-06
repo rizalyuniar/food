@@ -34,7 +34,9 @@ export class MenuGroupController {
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.menuGroupService.remove(+id);
+  @Roles('admin','kasir')
+  remove(@Param('id') id: string, @Request() request) {
+    const payload = request['admin'];
+    return this.menuGroupService.remove(id, payload);
   }
 }

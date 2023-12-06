@@ -49,7 +49,14 @@ export class BannerService {
     return this.bannerRepository.save(banner)
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} banner`;
+  async remove(id: string, payload: AdminPayload) {
+    const banner = await this.bannerRepository.findOne({ where: {id} });
+
+    if (!banner) {
+      throw new Error(`Banner with ID ${id} not found`);
+    }
+    banner.status = -1;
+    banner.deleted_at = new Date();
+    banner.deleted_by = payload.username
   }
 }
